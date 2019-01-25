@@ -3,7 +3,6 @@ package baptiste.rayer.master2;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -17,14 +16,14 @@ import baptiste.rayer.master2.Controller.AsynchTaskImage;
 import baptiste.rayer.master2.model.Film;
 
 public class MainActivity extends AppCompatActivity {
-    ArrayAdapterListe adapter;
+    public ArrayAdapterListe adapter;
     List<Film> lst;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ListView lv = (ListView) findViewById(R.id.lst_view);
-        AsynchTaskImage async = new AsynchTaskImage();
         lst = new ArrayList<>();
         Button updateImage = (Button) findViewById(R.id.random_film);
 
@@ -38,10 +37,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 ExecutorService service =  Executors.newFixedThreadPool(5);
                 for(Film film: lst) {
-                    AsynchTaskImage atf = new AsynchTaskImage();
+                    AsynchTaskImage atf = new AsynchTaskImage(MainActivity.this);
                     atf.executeOnExecutor(service, film);
-                    adapter.notifyDataSetChanged();
-
                 }
             }
         };

@@ -4,12 +4,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
+import baptiste.rayer.master2.MainActivity;
 import baptiste.rayer.master2.model.Film;
 
 /**
@@ -17,8 +19,9 @@ import baptiste.rayer.master2.model.Film;
  */
 
 public class AsynchTaskImage extends AsyncTask<Film, Object, Object> {
-
-    public AsynchTaskImage(){
+    MainActivity context;
+    public AsynchTaskImage(MainActivity context){
+        this.context = context;
     }
 
     @Override
@@ -41,5 +44,7 @@ public class AsynchTaskImage extends AsyncTask<Film, Object, Object> {
         return null;
     }
     @Override
-    protected void onPostExecute(Object o) {}
+    protected void onPostExecute(Object o) {
+        context.adapter.notifyDataSetChanged();
+    }
 }
