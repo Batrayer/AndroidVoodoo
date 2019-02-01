@@ -10,8 +10,12 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import baptiste.rayer.master2.Controller.ArrayAdapterListe;
 import baptiste.rayer.master2.Controller.AsynchTaskImage;
@@ -22,13 +26,15 @@ import baptiste.rayer.master2.model.Film;
 public class MainActivity extends AppCompatActivity {
     public ArrayAdapterListe adapter;
     List<Film> lst;
-
+    ThreadPoolExecutor thpe;
+    BlockingQueue<Runnable> bcq;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ListView lv = (ListView) findViewById(R.id.lst_view);
         lst = new ArrayList<>();
+        Button updateImagePool = findViewById(R.id.add_film);
         Button updateImage = (Button) findViewById(R.id.random_film);
 
         Film f = new Film();
@@ -79,5 +85,20 @@ public class MainActivity extends AppCompatActivity {
             htfi.onLooperPrepared();
             htfi.getHandler().post(new ThreadForFilm(film, MainActivity.this));
         }
+
+        bcq = new LinkedBlockingDeque<Runnable>();
+        thpe = new ThreadPoolExecutor(5, 5, 10, TimeUnit.SECONDS, bcq);
+
+        View.OnClickListener listenerUpdateFilmPool = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                for(Film film: lst) {
+                    thpe.execute(new ThreadForFilm(film, MainActivity.this));
+
+                }
+
+            }
+        };
+        updateImagePool.setOnClickListener(listenerUpdateFilmPool);
     }
 }
