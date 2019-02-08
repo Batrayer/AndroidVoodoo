@@ -1,20 +1,22 @@
 package baptiste.rayer.master2;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Looper;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -30,15 +32,16 @@ public class MainActivity extends AppCompatActivity {
     List<Film> lst;
     ThreadPoolExecutor thpe;
     BlockingQueue<Runnable> bcq;
+    public static final int MY_PERMISSIONS_REQUEST_STORAGE = 1;
+    public static final int MY_PERMISSIONS_REQUEST_CAMERA = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         ListView lv = (ListView) findViewById(R.id.lst_view);
         lst = new ArrayList<>();
-        Button updateImagePool = findViewById(R.id.add_film);
-        Button updateImage = (Button) findViewById(R.id.random_film);
 
         Film f = new Film();
         adapter = new ArrayAdapterListe( MainActivity.this, lst);
@@ -67,7 +70,24 @@ public class MainActivity extends AppCompatActivity {
         lst.add(f);
 
         lv.setAdapter(adapter);
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+                PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    MY_PERMISSIONS_REQUEST_STORAGE
+            );
+        }else{
+            addAllListener();
+            if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA},
+                        MY_PERMISSIONS_REQUEST_CAMERA);
+            }
+        }
+    }
 
+    public void addAllListener() {
+        Button updateImagePool = findViewById(R.id.add_film);
+        Button updateImage = (Button) findViewById(R.id.random_film);
         View.OnClickListener listenerUpdateFilm = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -103,5 +123,35 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         updateImagePool.setOnClickListener(listenerUpdateFilmPool);
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        System.out.println("Starfoula ?");
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_STORAGE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    addAllListener();
+                } else {
+                    finish();
+                }
+                return;
+            }
+            case MY_PERMISSIONS_REQUEST_CAMERA: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d("CAMERA", "SUCCESS");
+                } else {
+                    Log.d("CAMERA", "FAILURE");
+
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request.
+        }
     }
 }
