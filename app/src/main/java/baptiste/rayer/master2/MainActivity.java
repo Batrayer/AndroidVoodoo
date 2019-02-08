@@ -1,5 +1,6 @@
 package baptiste.rayer.master2;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -28,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     List<Film> lst;
     ThreadPoolExecutor thpe;
     BlockingQueue<Runnable> bcq;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         Button updateImage = (Button) findViewById(R.id.random_film);
 
         Film f = new Film();
-        adapter = new ArrayAdapterListe( this, lst);
+        adapter = new ArrayAdapterListe( MainActivity.this, lst);
         f.setNom("Die Hard");
         lst.add(f);
         f = new Film();

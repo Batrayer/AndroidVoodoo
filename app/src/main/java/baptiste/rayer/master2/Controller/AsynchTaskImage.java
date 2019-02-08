@@ -7,6 +7,7 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -14,14 +15,11 @@ import java.net.URLConnection;
 import baptiste.rayer.master2.MainActivity;
 import baptiste.rayer.master2.model.Film;
 
-/**
- * Created by Batra on 02/01/2018.
- */
-
 public class AsynchTaskImage extends AsyncTask<Film, Object, Object> {
-    MainActivity context;
-    public AsynchTaskImage(MainActivity context){
-        this.context = context;
+    WeakReference<MainActivity> context;
+    public AsynchTaskImage(MainActivity context)
+    {
+        this.context = new WeakReference<MainActivity>(context);
     }
 
     @Override
@@ -45,6 +43,10 @@ public class AsynchTaskImage extends AsyncTask<Film, Object, Object> {
     }
     @Override
     protected void onPostExecute(Object o) {
-        context.adapter.notifyDataSetChanged();
+        if(context != null){
+            context.get().adapter.notifyDataSetChanged();
+        } else {
+            Log.d("AsynchTask_onPostExec", "context = null");
+        }
     }
 }

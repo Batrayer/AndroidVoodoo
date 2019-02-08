@@ -14,8 +14,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
+import baptiste.rayer.master2.MainActivity;
 import baptiste.rayer.master2.R;
 import baptiste.rayer.master2.model.Film;
 
@@ -24,8 +26,9 @@ import baptiste.rayer.master2.model.Film;
  */
 
 public class ArrayAdapterListe extends ArrayAdapter {
-    public ArrayAdapterListe(@NonNull Context context, @NonNull List<Film> resource) {
-        super(context,R.layout.list_array_adapter,resource);
+    public ArrayAdapterListe(Context context, @NonNull List<Film> resource) {
+        super(context, R.layout.list_array_adapter,resource);
+
     }
 
     @Override
