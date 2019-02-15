@@ -1,10 +1,8 @@
 package baptiste.rayer.master2;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
-import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import baptiste.rayer.master2.Controller.ArrayAdapterListe;
 import baptiste.rayer.master2.Controller.AsynchTaskImage;
+import baptiste.rayer.master2.Controller.FileWriter;
 import baptiste.rayer.master2.Controller.HandlerThreadForImage;
 import baptiste.rayer.master2.Controller.ThreadForFilm;
 import baptiste.rayer.master2.model.Film;
@@ -88,10 +87,13 @@ public class MainActivity extends AppCompatActivity {
     public void addAllListener() {
         Button updateImagePool = findViewById(R.id.add_film);
         Button updateImage = (Button) findViewById(R.id.random_film);
+        Button export = (Button) findViewById(R.id.export);
+        Button imports = (Button) findViewById(R.id.imports);
+        Button removeAll = (Button) findViewById(R.id.delete_list);
         View.OnClickListener listenerUpdateFilm = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                for(Film film: lst) {
+                for (Film film : lst) {
                     AsynchTaskImage atf = new AsynchTaskImage(MainActivity.this);
                     //
                     atf.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, film);
@@ -104,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
 
         HandlerThreadForImage htfi = new HandlerThreadForImage("handler");
         htfi.start();
-        for(Film film: lst) {
+        for (Film film : lst) {
             htfi.onLooperPrepared();
             htfi.getHandler().post(new ThreadForFilm(film, MainActivity.this));
         }
@@ -115,19 +117,47 @@ public class MainActivity extends AppCompatActivity {
         View.OnClickListener listenerUpdateFilmPool = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                for(Film film: lst) {
+                for (Film film : lst) {
                     thpe.execute(new ThreadForFilm(film, MainActivity.this));
 
                 }
-
             }
         };
         updateImagePool.setOnClickListener(listenerUpdateFilmPool);
+        View.OnClickListener listenerForExport = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FileWriter fw = new FileWriter();
+                fw.ecriture((ArrayList) lst);
+            }
+        };
+        export.setOnClickListener(listenerForExport);
+
+        View.OnClickListener listenerImport = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FileWriter fw = new FileWriter();
+                List<Film> lst2 = fw.lecture();
+                for(Film f: lst2) {
+                    lst.add(f);
+                }
+                adapter.notifyDataSetChanged();
+            }
+        };
+        imports.setOnClickListener(listenerImport);
+
+        View.OnClickListener listenerForDeleteAll = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                lst.clear();
+                adapter.notifyDataSetChanged();
+            }
+        };
+        removeAll.setOnClickListener(listenerForDeleteAll);
     }
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
-        System.out.println("Starfoula ?");
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_STORAGE: {
                 // If request is cancelled, the result arrays are empty.

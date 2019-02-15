@@ -7,42 +7,88 @@
     tools:context="baptiste.rayer.master2.MainActivity">
 
     <LinearLayout
-        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <Button
-            android:id="@+id/add_film"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Add a Film"
-            tools:text="Add a Film" />
+            android:gravity="top"
+            android:orientation="horizontal"
+            android:visibility="visible"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="48dp">
 
-        <Button
-            android:id="@+id/random_film"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Get a random one"
-            tools:text="Get a random one" />
+            <Button
+                android:id="@+id/delete_list"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Delete all"
+                tools:text="Delete all" />
 
-        <Button
-            android:id="@+id/export"
-            android:layout_width="wrap_content"
+            <Button
+                android:id="@+id/imports"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="imports"
+                tools:text="imports" />
+
+            <Button
+                android:id="@+id/nothingness"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="nothingness"
+                tools:text="nothingness" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout2">
+
+            <Button
+                android:id="@+id/add_film"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Add a Film"
+                tools:text="Add a Film" />
+
+            <Button
+                android:id="@+id/random_film"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Get a random one"
+                tools:text="Get a random one" />
+
+            <Button
+                android:id="@+id/export"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Export"
+                tools:text="Export" />
+
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/lst_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="8dp"
             android:layout_weight="1"
-            android:text="Export"
-            tools:text="Export" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+            tools:layout_editor_absoluteX="0dp" />
     </LinearLayout>
-
-    <ListView
-        android:id="@+id/lst_view"
-        android:layout_width="wrap_content"
-        android:layout_height="517dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        tools:layout_editor_absoluteX="0dp" />
 
 </android.support.constraint.ConstraintLayout>
