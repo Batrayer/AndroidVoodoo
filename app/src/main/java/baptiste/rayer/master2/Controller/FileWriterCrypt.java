@@ -10,29 +10,59 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
+import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
+import javax.crypto.spec.SecretKeySpec;
+
 import baptiste.rayer.master2.model.Film;
 /**
  * Created by Batra on 08/02/2019.
  */
 
 public class FileWriterCrypt {
-    public void ecriture(ArrayList<Film> liste){
-        ObjectOutputStream oos = null;
+    private SecretKeySpec keyspec;
+    private Cipher cipher;
+    private String secretKey = "0123456789abcdef";
+
+    public FileWriterCrypt() {
         try {
+            keyspec = new SecretKeySpec(secretKey.getBytes(), "AES");
+            cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void ecriture(ArrayList<Film> liste){
+        ObjectOutputStream outputStream = null;
+        try {
+            for(Film f: liste) {
+                f.setImage(null);
+            }
             File path = Environment.getExternalStoragePublicDirectory(
                     Environment.DIRECTORY_MOVIES);
             File file = new File(path, "/" + "films");
-            FileOutputStream fichier = new FileOutputStream(file);
-            oos = new ObjectOutputStream(fichier);
-            oos.writeObject(liste);
-            oos.flush();
-        } catch (IOException e) {
+
+            try {
+                cipher.init(Cipher.ENCRYPT_MODE, keyspec);
+                FileOutputStream fichier = new FileOutputStream(file);
+
+                CipherOutputStream cos = new CipherOutputStream(fichier, cipher);
+                outputStream = new ObjectOutputStream(cos);
+                outputStream.writeObject(liste);
+                outputStream.close();
+            } catch (Exception e) {
+                throw new Exception("[encrypt] " + e.getMessage());
+            }
+            outputStream.flush();
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             try {
-                if (oos != null) {
-                    oos.flush();
-                    oos.close();
+                if (outputStream!= null) {
+                    outputStream.flush();
+                    outputStream.close();
                 }
             }catch (IOException e) {
                 e.printStackTrace();
@@ -43,17 +73,21 @@ public class FileWriterCrypt {
     public ArrayList<Film> lecture(){
         ObjectInputStream oos = null;
         try {
+            cipher.init(Cipher.DECRYPT_MODE, keyspec);
             File path = Environment.getExternalStoragePublicDirectory(
                     Environment.DIRECTORY_MOVIES);
             File file = new File(path, "/" + "films");
             FileInputStream fichier = new FileInputStream(file);
-            oos = new ObjectInputStream(fichier);
+
+            CipherInputStream cis = new CipherInputStream(fichier, cipher);
+            oos = new ObjectInputStream(cis);
+
             try {
                 return (ArrayList<Film>) oos.readObject();
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             try {

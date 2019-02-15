@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import baptiste.rayer.master2.Controller.ArrayAdapterListe;
 import baptiste.rayer.master2.Controller.AsynchTaskImage;
 import baptiste.rayer.master2.Controller.FileWriter;
+import baptiste.rayer.master2.Controller.FileWriterCrypt;
 import baptiste.rayer.master2.Controller.HandlerThreadForImage;
 import baptiste.rayer.master2.Controller.ThreadForFilm;
 import baptiste.rayer.master2.model.Film;
@@ -127,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
         View.OnClickListener listenerForExport = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FileWriter fw = new FileWriter();
+                FileWriterCrypt fw = new FileWriterCrypt();
                 fw.ecriture((ArrayList) lst);
             }
         };
@@ -136,11 +137,9 @@ public class MainActivity extends AppCompatActivity {
         View.OnClickListener listenerImport = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FileWriter fw = new FileWriter();
+                FileWriterCrypt fw = new FileWriterCrypt();
                 List<Film> lst2 = fw.lecture();
-                for(Film f: lst2) {
-                    lst.add(f);
-                }
+                lst.addAll(lst2);
                 adapter.notifyDataSetChanged();
             }
         };
